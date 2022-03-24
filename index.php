@@ -21,7 +21,7 @@ function get_footer() {
 
 function get_form() {
   return '<!-- Form -->
-  <section class="bg-white w-full flex flex-col justify-center items-center pt-14 pb-16" id="form">
+  <section class="bg-white w-full flex flex-col justify-center items-center pt-14 pb-16">
     <div class="container mx-auto flex flex-col items-center pb-8">
       <h1 class="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">
         Manage your Web application design!
@@ -100,26 +100,40 @@ function get_form() {
           <option value=1>Medium</option>
           <option value=2>Large</option>
         </select>
-        <input type="submit" class="mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out space-y-8 mt-8" />
+        <input type="submit" name="action" value="Generate" class="mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out space-y-8 mt-8" />
       </form>
     </div>
   </section>';
 }
 
-function get_next() {
-  return '<!-- Form next -->
-  <section class="bg-white w-full flex flex-col justify-center items-center pt-14 pb-16" id="form">
-    <div class="container mx-auto flex flex-col items-center pb-8">
-      <form class="w-3/4 mx-auto px-12" method="post" action="/">
-        <input name="primary_color" type="hidden" value="' . $_POST['primary_color'] . '">
-        <input name="secondary_color" type="hidden" value="' . $_POST['secondary_color'] . '">
-        <input name="hero_type" type="hidden" value="' . $_POST['hero_type'] . '">
-        <input name="text_size" type="hidden" value="' . $_POST['text_size'] . '">
-        <input type="submit" value="Next" class="mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out space-y-8" />
+function get_next($settings) {
+  return "<!-- Form next -->
+  <section class='bg-white w-full flex flex-col justify-center items-center pt-14 pb-16'>
+    <div class='container mx-auto flex flex-col items-center pb-8'>
+      <form class='w-3/4 mx-auto px-12' method='post' action='/'>
+        <input name='primary_color' type='hidden' value='" . $_POST['primary_color'] . "'>
+        <input name='secondary_color' type='hidden' value='" . $_POST['secondary_color'] . "'>
+        <input name='hero_type' type='hidden' value='" . $_POST['hero_type'] . "'>
+        <input name='text_size' type='hidden' value='" . $_POST['text_size'] . "'>
+        <input name='settings' type='hidden' value='" . serialize($settings) . "'>
+        <input type='submit' name='action' value='Next' class='mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out space-y-8' />
+        <input type='submit' name='action' value='Save' class='mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out space-y-8' />
       </form>
     </div>
-  </section>';
+  </section>";
 }
+
+/*function get_save($settings) {
+  return "<!-- Form save -->
+  <section class='bg-white w-full flex flex-col justify-center items-center pt-14 pb-16'>
+    <div class='container mx-auto flex flex-col items-center pb-8'>
+      <form class='w-3/4 mx-auto px-12' method='post' action='/'>
+        <input name='settings' type='hidden' value='" . serialize($settings) . "'>
+        <input type='submit' value='Save' class='mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out space-y-8' />
+      </form>
+    </div>
+  </section>";
+}*/
 
 function get_settings($primary_color, $secondary_color, $hero_type, $text_size) {
   $colors = [
@@ -235,9 +249,34 @@ function get_hero($settings) {
 
 echo get_header();
 if (isset($_POST['primary_color'])) {
-  $settings = get_settings($_POST['primary_color'], $_POST['secondary_color'], $_POST['hero_type'],  $_POST['text_size']);
+  if ($_POST['action'] == 'Save') {
+    $settings = unserialize($_POST['settings']);
+    if(file_put_contents(time() . '.html', get_header() . get_hero($settings) . get_footer())) {
+      echo '<!-- Form -->
+      <section class="bg-green w-full flex flex-col justify-center items-center pt-14 pb-16" id="form">
+        <div class="container mx-auto flex flex-col items-center pb-8">
+          <h2 class="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">
+            The markup was saved!
+          </h2>
+        </div>
+      </section>';
+    }
+    else {
+      echo '<!-- Form -->
+      <section class="bg-red w-full flex flex-col justify-center items-center pt-14 pb-16" id="form">
+        <div class="container mx-auto flex flex-col items-center pb-8">
+          <h2 class="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">
+            File error!
+          </h2>
+        </div>
+      </section>';
+    }
+  }
+  else {
+    $settings = get_settings($_POST['primary_color'], $_POST['secondary_color'], $_POST['hero_type'],  $_POST['text_size']);
+  }
   echo get_hero($settings);
-  echo get_next();
+  echo get_next($settings);
 }
 else {
   echo get_form();
