@@ -27,14 +27,13 @@ function get_form() {
         Manage your Web application design!
       </h1>
       <form class="w-3/4 mx-auto px-12" method="post" action="/">
-        <label for="primary_color" class="inline-flex mb-4 text-2xl text-gray-800">
+        <label for="primary_color" class="inline-flex mb-4 mt-8 text-2xl text-gray-800 space-y-8">
           Primary color <a href="https://tailwindcss.com/docs/customizing-colors" target="_blank">*</a>
         </label>
         <select name="primary_color" class="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-primary focus:border-gray-500">
           <option>random</option>
           <option>slate</option>
           <option>gray</option>
-          <option>zink</option>
           <option>neutral</option>
           <option>stone</option>
           <option>red</option>
@@ -55,14 +54,13 @@ function get_form() {
           <option>pink</option>
           <option>rose</option>
         </select>
-        <label for="secondary_color" class="inline-flex mb-4 text-2xl text-gray-800">
+        <label for="secondary_color" class="inline-flex mb-4 mt-8 text-2xl text-gray-800 space-y-8">
           Secondary color <a href="https://tailwindcss.com/docs/customizing-colors" target="_blank">*</a>
         </label>
         <select name="secondary_color" class="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-primary focus:border-gray-500">
           <option>random</option>
           <option>slate</option>
           <option>gray</option>
-          <option>zink</option>
           <option>neutral</option>
           <option>stone</option>
           <option>red</option>
@@ -83,7 +81,7 @@ function get_form() {
           <option>pink</option>
           <option>rose</option>
         </select>
-        <label for="hero_type" class="inline-flex mb-4 text-2xl text-gray-800">
+        <label for="hero_type" class="inline-flex mb-4 mt-8 text-2xl text-gray-800 space-y-8">
           Hero type <a href="https://daisyui.com/components/hero/" target="_blank">*</a>
         </label>
         <select name="hero_type" class="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-primary focus:border-gray-500">
@@ -93,17 +91,40 @@ function get_form() {
           <option value="right">Hero with figure but reverse order</option>
           <!--<option value="overlay">Hero with overlay image</option>-->
         </select>
-        <input type="submit" class="mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out" />
+        <label for="hero_type" class="inline-flex mb-4 mt-8 text-2xl text-gray-800 space-y-8">
+          Text size
+        </label>
+        <select name="text_size" class="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-primary focus:border-gray-500">
+          <option value="random">Random</option>
+          <option value=0>Small</option>
+          <option value=1>Medium</option>
+          <option value=2>Large</option>
+        </select>
+        <input type="submit" class="mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out space-y-8 mt-8" />
       </form>
     </div>
   </section>';
 }
 
-function get_settings($primary_color, $secondary_color, $hero_type) {
+function get_next() {
+  return '<!-- Form next -->
+  <section class="bg-white w-full flex flex-col justify-center items-center pt-14 pb-16" id="form">
+    <div class="container mx-auto flex flex-col items-center pb-8">
+      <form class="w-3/4 mx-auto px-12" method="post" action="/">
+        <input name="primary_color" type="hidden" value="' . $_POST['primary_color'] . '">
+        <input name="secondary_color" type="hidden" value="' . $_POST['secondary_color'] . '">
+        <input name="hero_type" type="hidden" value="' . $_POST['hero_type'] . '">
+        <input name="text_size" type="hidden" value="' . $_POST['text_size'] . '">
+        <input type="submit" value="Next" class="mx-auto lg:mx-0 hover:underline hover:bg-red-primary bg-black text-white font-bold rounded-full py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out space-y-8" />
+      </form>
+    </div>
+  </section>';
+}
+
+function get_settings($primary_color, $secondary_color, $hero_type, $text_size) {
   $colors = [
     'slate',
     'gray',
-    'zink',
     'neutral',
     'stone',
     'red',
@@ -130,10 +151,22 @@ function get_settings($primary_color, $secondary_color, $hero_type) {
     'right',
     //'overlay'
   ];
+  $title_size_mobile = [
+    'text-2xl',
+    'text-3xl',
+    'text-4xl',
+  ];
+  $title_size_desktop = [
+    'text-3xl',
+    'text-4xl',
+    'text-5xl',
+  ];
   return [
     'primary_color' => $primary_color != 'random' ? $primary_color : $colors[array_rand($colors)],
     'secondary_color' => $secondary_color != 'random' ? $secondary_color : $colors[array_rand($colors)],
     'hero_type' => $hero_type != 'random' ? $hero_type : $h_types[array_rand($h_types)],
+    'title_size_mobile' => $text_size != 'random' ? $title_size_mobile[$text_size] : $title_size_mobile[array_rand($title_size_mobile)],
+    'title_size_desktop' => $text_size != 'random' ? $title_size_desktop[$text_size] : $title_size_desktop[array_rand($title_size_desktop)],
   ];
 }
 
@@ -141,6 +174,8 @@ function get_hero($settings) {
   $output = '';
   $primary = $settings['primary_color'];
   $secondary = $settings['secondary_color'];
+  $title_size_mobile = $settings['title_size_mobile'];
+  $title_size_desktop = $settings['title_size_desktop'];
   switch ($settings['hero_type']) {
     case 'center':
       $output = '<!-- Hero center -->
@@ -164,12 +199,12 @@ function get_hero($settings) {
           <div class="container flex px-6 py-4 mx-auto lg:h-128 lg:py-16 ' . $case . '">
               <div class="flex flex-col items-center w-full ' . $case . ' lg:w-1/2">
                   <div class="max-w-lg">
-                      <h1 class="text-3xl tracking-wide text-white text-gray-800 lg:text-4xl">Set your title</h1>
+                      <h1 class="' . $title_size_mobile . ' tracking-wide text-' . $primary . '-800 lg:' . $title_size_desktop . '">Set your title</h1>
                       <p class="mt-4 text-gray-300 text-gray-600">Lorem ipsum, dolor sit amet consectetur
                           adipisicing elit. Aut quia asperiores alias vero magnam recusandae adipisci ad vitae
                           laudantium quod rem voluptatem eos accusantium cumque.</p>
                       <div class="mt-6">
-                          <a href="#" class="block px-3 py-2 font-semibold text-center text-white transition-colors duration-200 transform bg-' . $primary . '-900 rounded-md lg:inline hover:bg-' . $primary . '-800">Download
+                          <a href="#" class="block px-3 py-2 font-semibold text-center text-white transition-colors duration-200 transform bg-' . $primary . '-800 rounded-md lg:inline hover:bg-' . $primary . '-600">Download
                           </a>
                       </div>
                   </div>
@@ -200,8 +235,9 @@ function get_hero($settings) {
 
 echo get_header();
 if (isset($_POST['primary_color'])) {
-  $settings = get_settings($_POST['primary_color'], $_POST['secondary_color'], $_POST['hero_type']);
+  $settings = get_settings($_POST['primary_color'], $_POST['secondary_color'], $_POST['hero_type'],  $_POST['text_size']);
   echo get_hero($settings);
+  echo get_next();
 }
 else {
   echo get_form();
