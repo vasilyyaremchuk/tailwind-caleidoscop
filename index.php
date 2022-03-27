@@ -292,6 +292,16 @@ function get_hero($settings) {
   return $output;
 }
 
+if (isset($_POST['action']) && $_POST['action'] == 'Save') {
+  $filename = 'tailwind-kaleidoscope-' . time() . '.html';
+  $result = get_header() . get_hero(unserialize($_POST['settings'])) . get_footer();
+  header("Content-Type: text/html");
+  header('Content-Disposition: attachment; filename="'.$filename.'"');
+  header("Content-Length: " . strlen($result));
+  echo $result;
+  exit;
+}
+
 echo get_header();
 if (isset($_POST['primary_color'])) {
   if ($_POST['action'] == 'Save') {
